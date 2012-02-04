@@ -1,19 +1,24 @@
 package com.example.domain;
 
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import java.io.Serializable;
-import javax.persistence.Id;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
-import javax.persistence.Column;
+import javax.persistence.Id;
 import javax.persistence.Version;
-import java.lang.Override;@Entity public class User implements java.io.Serializable {
 
+@Entity 
+public class User implements java.io.Serializable {
+
+	private static final long serialVersionUID = 1L;
+	
 	@Id
 	private @GeneratedValue(strategy = GenerationType.AUTO)
+	
 	@Column(name = "id", updatable = false, nullable = false)
 	Long id = null;
+	
 	@Version
 	private @Column(name = "version")
 	int version = 0;

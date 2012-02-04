@@ -1,21 +1,26 @@
 package com.example.domain;
 
 
+import java.util.ArrayList;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import java.io.Serializable;
-import javax.persistence.Id;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
-import javax.persistence.Column;
+import javax.persistence.Id;
 import javax.persistence.Version;
-import java.lang.Override;
-import User;
-import ArrayList;@Entity public class Player implements java.io.Serializable {
 
+@Entity 
+public class Player implements java.io.Serializable {
+
+	private static final long serialVersionUID = 7884292690096443611L;
+	
 	@Id
 	private @GeneratedValue(strategy = GenerationType.AUTO)
+	
 	@Column(name = "id", updatable = false, nullable = false)
 	Long id = null;
+	
 	@Version
 	private @Column(name = "version")
 	int version = 0;
@@ -84,13 +89,13 @@ import ArrayList;@Entity public class Player implements java.io.Serializable {
 	}
 
 	@Column
-	private ArrayList friendList;
+	private ArrayList<Long> friendList;
 
-	public ArrayList getFriendList() {
+	public ArrayList<Long> getFriendList() {
 		return this.friendList;
 	}
 
-	public void setFriendList(final ArrayList friendList) {
+	public void setFriendList(final ArrayList<Long> friendList) {
 		this.friendList = friendList;
 	}
 
