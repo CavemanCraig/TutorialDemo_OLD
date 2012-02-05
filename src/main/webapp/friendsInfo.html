@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:fb="http://www.facebook.com/2008/fbml">
+  <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+      <title>Tutorial Demo - Friends Info</title>
+  </head>
+  <body>
+
+      <div id="fb-root"></div>
+      <center><H2>Here is the Facebook Data for each of your friends:</H2></P>
+      <div id="friend-info"></div>
+      </center>
+      <a href='index.html'>Go back to main page</a><BR />
+      <script type="text/javascript">
+          window.fbAsyncInit = function() {
+              FB.init({appId: '    244754992228365', status: true, cookie: true, xfbml: true, oauth: true});
+
+              FB.Event.subscribe('auth.login', function(response) {
+                  getFriendsInfo();
+              });
+
+              FB.getLoginStatus(function(response) {
+                  if (response.authResponse) {
+                      getFriendsInfo();
+                  }
+              });
+          };
+          (function() {
+              var e = document.createElement('script');
+              e.src = document.location.protocol +
+                  '//connect.facebook.net/en_US/all.js';
+              e.async = true;
+              document.getElementById('fb-root').appendChild(e);
+          }());
+
+          function getFriendsInfo() {
+               FB.api("/me/friends", function(response) {
+                   var allFriends = response.data;
+                   var tableString = "<TABLE>"
+                   for (var i = 0; i < allFriends.length; i++)
+                   {
+                       if(i % 5 == 0){
+                           //Print out up to 5 friends per table row, then start a new row.
+
+                           if(i==0){
+                               //Begin the first TR
+                               tableString = tableString + "<TR>";
+                           }
+                           else{
+                               //End the last TR and start a new one
+                               tableString = tableString + "</TR><TR>";
+                           }
+                       }
+
+                       tableString = tableString + "<TD>" + "<img src='http://graph.facebook.com/" + allFriends[i].id + "/picture'> </BR>";
+                       tableString = tableString + allFriends[i].name + '</TD>';
+                   }
+                   tableString = tableString + '</TR></TABLE>';
+                   var friendInfoElem = document.getElementById('friend-info');
+                     friendInfoElem.innerHTML = tableString;
+               });
+          }
+
+      </script>
+      
+</body>
+</html>
