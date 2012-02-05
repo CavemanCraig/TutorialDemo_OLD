@@ -98,7 +98,16 @@ public class Player implements java.io.Serializable {
 	public void setFriendList(final ArrayList<Long> friendList) {
 		this.friendList = friendList;
 	}
+	
+    public Player(){
+    }
+
+    public Player(User playerInfo) {
+        this.playerInfo = playerInfo;
+        this.points = 100; //New users get 100 points to start with
+        this.friendList = new ArrayList<Long>();
+    }
 
 	public String toString() {
-		return "" + points;
+		return playerInfo.getName() + ", " + points + ", FrindIDs: [" + friendList + "]";
 	} }
