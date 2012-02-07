@@ -16,19 +16,19 @@ public class User implements java.io.Serializable {
 	@Id
 	private @GeneratedValue(strategy = GenerationType.AUTO)
 	
-	@Column(name = "id", updatable = false, nullable = false)
-	Long id = null;
+	@Column(name = "userId", updatable = false, nullable = false, unique = true)
+	Long userId = null;
 	
 	@Version
 	private @Column(name = "version")
 	int version = 0;
 
-	public Long getId() {
-		return this.id;
+	public Long getuserId() {
+		return this.userId;
 	}
 
-	public void setId(final Long id) {
-		this.id = id;
+	public void setuserId(final Long userId) {
+		this.userId = userId;
 	}
 
 	public int getVersion() {
@@ -50,16 +50,16 @@ public class User implements java.io.Serializable {
 		if (getClass() != that.getClass()) {
 			return false;
 		}
-		if (id != null) {
-			return id.equals(((User) that).id);
+		if (userId != null) {
+			return userId.equals(((User) that).userId);
 		}
 		return super.equals(that);
 	}
 
 	@Override
 	public int hashCode() {
-		if (id != null) {
-			return id.hashCode();
+		if (userId != null) {
+			return userId.hashCode();
 		}
 		return super.hashCode();
 	}

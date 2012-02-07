@@ -62,7 +62,7 @@ public class MyWebService {
         return  foundUser;
     }
 
-    // Returns a list of all Players
+    // Returns a a list of all Players
     @GET
     @Path("/AllPlayers")
     @Produces("text/xml")
@@ -70,8 +70,7 @@ public class MyWebService {
         System.out.println("GET on All Players");
    
         TypedQuery<Player> query = em.createQuery(
-                "from Player p where p.PlayerInfo.FacebookID > ?",
-                Player.class);
+                "from Player p ", Player.class);
         query.setParameter(1, 0l);
         List<Player> result = query.getResultList();
         System.out.println("Returning List: " +  result);
@@ -234,9 +233,9 @@ public class MyWebService {
     public static Player getPlayerByFacebookID(EntityManager em, long facebookID) {
         Player returnPlayer = null;
         try {
-
+        	
             TypedQuery<Player> query = em.createQuery(
-                    "from Player p where p.PlayerInfo.FacebookID = ?",
+                    "from Player p where p.playerInfo.facebookID = ?",
                     Player.class);
             query.setParameter(1, facebookID);
             List<Player> result = query.getResultList();
@@ -270,7 +269,7 @@ public class MyWebService {
         try {
 
             TypedQuery<User> query = em.createQuery(
-                    "from User u where u.FacebookID = ?", User.class);
+                    "from User u where u.facebookID = ?", User.class);
             query.setParameter(1, facebookID);
             List<User> result = query.getResultList();
             if (result.isEmpty()) {
