@@ -97,6 +97,9 @@ public class User implements java.io.Serializable {
 		this.imageURL = imageURL;
 	}
 	
+	public User() {
+	}
+	
 	public User(long facebookID, String name, String imageURL) {
 		this.facebookID = facebookID;
 		this.name = name;
