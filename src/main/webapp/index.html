@@ -1,36 +1,325 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:fb="http://www.facebook.com/2008/fbml">
-   <head>
-       <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-       <title>Welcome to Tutorial Demo</title>
-   </head>
-   <body>
+  <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+      <title>Welcome to Tutorial Demo</title>
+  </head>
+  <body>
 
-       <!-- <fb:login-button autologoutlink="true" perms="email,user_birthday,status_update,publish_stream"></fb:login-button></p>
--->
-       <fb:login-button autologoutlink="true">
-       </fb:login-button>
+      <!-- <fb:login-button autologoutlink="true" perms="email,user_birthday,status_update,publish_stream"></fb:login-button></p>
+      -->
+      <fb:login-button autologoutlink="true">
+      </fb:login-button>
 
-       <div id="fb-root"></div>
-       <script type="text/javascript">
-           window.fbAsyncInit = function() {
-               FB.init({appId: ' 244754992228365', status: true, cookie: true, xfbml: true});
-            };
-           (function() {
-               var e = document.createElement('script');
-               e.type = 'text/javascript';
-               e.src = document.location.protocol +
-                   '//connect.facebook.net/en_US/all.js';
-               e.async = true;
-               document.getElementById('fb-root').appendChild(e);
-           }());
-       </script>
-       
-       <center>
-       <H1>Welcome to Tutorial Demo</H1><P /><BR />
-       <a href='myInfo.html'>Get Your Info Here</a><BR />
-       <a href='friendsInfo.html'>Get Your Friends Info Here</a>
-       </center>
-       
+      <div id="fb-root"></div>
+      <script type="text/javascript">
+          window.fbAsyncInit = function() {
+              FB.init({appId: '    244754992228365', 
+					   status: true, 
+					   cookie: true, 
+					   xfbml: true, 
+					   oauth: true});
+
+              FB.Event.subscribe('auth.login', function(response) {
+                  getMyInfo();
+              });
+
+              FB.getLoginStatus(function(response) {
+                  if (response.authResponse) {
+                      getMyInfo();
+                  }
+              });
+          };
+          (function() {
+              var e = document.createElement('script');
+              e.src = document.location.protocol +
+                  '//connect.facebook.net/en_US/all.js';
+              e.async = true;
+              document.getElementById('fb-root').appendChild(e);
+          }());
+
+          var myID=null;
+          var myName=null;
+          
+          var isLocal = true;
+          var isDEBUG = false;
+                       
+          function getMyInfo(){
+              FB.api("/me", {fields: "id,name"}, function(response) {
+                  myID = response.id + 1;
+                  myName = response.name;
+                   doPOSTUser(myID, myName);
+                   doGETUser(myID);
+                   getFriendsInfo(myID, myName);
+              });
+          }
+
+          var friendIDList = new Array();
+          var friendNameList = new Array();
+          function getFriendsInfo(myID, myName) {
+               FB.api("/me/friends", function(response) {
+                   var allFriends = response.data;
+                   for (var i = 0; i < allFriends.length; i++)
+                   {
+                       friendIDList.push(allFriends[i].id);
+                       friendNameList.push(allFriends[i].name);
+                   }
+                   var POSTPlayerURL = "webService/PlayerRequest/" + myID + "/" + myName;
+
+                   var JSONfriendIDList = arrayToJson(friendIDList, "friendIDsList");
+                   var JSONfriendNameList = arrayToJson(friendNameList, "friendNamesList");
+                   var array2D = [
+                                  JSONfriendIDList,
+                                  JSONfriendNameList
+                                 ];
+                   var JSONInput = array2dToJson(array2D, '', "newArray");
+                   doPOSTPlayer(POSTPlayerURL, JSONInput);
+                   doGETPlayer(myID);
+               });
+          }
+
+
+          function doGETUser(GETfacebookID) {
+              
+              var GETurl = 'webService/User/' + GETfacebookID;
+               if(isLocal){GETurl = 'webService/User/1245';}
+
+               var myObj = null;
+               var xmlhttp = null;
+               if (window.XMLHttpRequest) {
+                 xmlhttp = new XMLHttpRequest();
+                 if ( typeof xmlhttp.overrideMimeType != 'undefined') {
+                   xmlhttp.overrideMimeType('text/json');
+                 }
+               } else if (window.ActiveXObject) {
+                 xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+               } else {
+                 alert('Your browser does not support xmlhttprequests.  Sorry.');
+               }
+  
+               xmlhttp.open('GET', GETurl, true);
+               xmlhttp.setRequestHeader('Content-Type', 'application/json');
+               xmlhttp.send(null);
+  
+               xmlhttp.onreadystatechange = function() {
+                     if (xmlhttp.readyState == 4) {
+                         if(xmlhttp.status == 200) {
+                             myObj = eval ( '(' + xmlhttp.responseText + ')' );
+                             if(isDEBUG){
+                                 alert("GET Success");
+                                 alert("name=" + myObj.name + ", id=" + myObj.id + ", version=" +
+                                         myObj.version + ", FBID=" + myObj.facebookID +
+                                         ", imageURL=" + myObj.imageURL);
+                             }
+                             return myObj;
+                         }
+                         else {
+                             if(isDEBUG){alert("GET Fail - status: " + xmlhttp.status + " - " + xmlhttp.responseText);}
+                           }
+                     } else {
+                       // wait for the call to complete
+                     }
+                  };
+                  return null;
+          }
+
+
+          function doPOSTUser(POSTfacebookID, POSTName) {
+
+               var POSTUrl = "webService/UserRequest/" + POSTfacebookID + "/" + POSTName;
+               if(isLocal){
+                   POSTUrl = "webService/UserRequest/1245/Craig Schwarzwald";
+               }
+               var myObj = null;
+               var xmlhttp = null;
+               if (window.XMLHttpRequest) {
+                 xmlhttp = new XMLHttpRequest();
+                 if ( typeof xmlhttp.overrideMimeType != 'undefined') {
+                   xmlhttp.overrideMimeType('application/json');
+                 }
+               } else if (window.ActiveXObject) {
+                 xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+               } else {
+                 alert('Your browser does not support xmlhttprequests.  Sorry.');
+               }
+  
+               xmlhttp.open('POST', POSTUrl, false);
+               xmlhttp.setRequestHeader('Content-Type', 'application/json');
+               xmlhttp.send(null);
+  
+               xmlhttp.onreadystatechange = function() {
+                     if (xmlhttp.readyState == 4) {
+                         if(xmlhttp.status == 200) {
+                             myObj = eval ( '(' + xmlhttp.responseText + ')' );
+                             if(isDEBUG){
+                                 alert("POST Success");
+                                 alert("name=" + myObj.name + ", id=" + myObj.id + ", version=" +
+                                         myObj.version + ", FBID=" + myObj.facebookID +
+                                         ", imageURL=" + myObj.imageURL);
+                             }
+                             return myObj;
+                         }
+                         else {
+                             if(isDEBUG){alert("POST Fail - status: " + xmlhttp.status + " - " + xmlhttp.responseText);}
+                           }
+                     } else {
+                       // wait for the call to complete
+                     }
+                  };
+                  return null;
+          }
+
+          if(isLocal)
+          {
+
+               var localFBID = 36985;
+               var POSTPlayerURL = "webService/PlayerRequest/" + localFBID + "/Craig Schwarzwald";
+               friendIDList = [5,6,7];
+               friendNameList = ["bob", "joe", "mary"];
+               var array2D = [
+                              friendIDList,
+                              friendNameList
+                              ];
+               var JSONInput = array2dToJson(array2D, '', "newArray");
+               if(isDEBUG){alert("JSON Input: " + JSONInput);}
+               doPOSTPlayer(POSTPlayerURL, JSONInput);
+               doGETPlayer(localFBID);
+           }
+
+
+          
+          function doGETPlayer(GETfacebookID) {
+              
+              var GETurl = 'webService/Player/' + GETfacebookID;
+              var myObj = null;
+               var xmlhttp = null;
+               if (window.XMLHttpRequest) {
+                 xmlhttp = new XMLHttpRequest();
+                 if ( typeof xmlhttp.overrideMimeType != 'undefined') {
+                   xmlhttp.overrideMimeType('text/json');
+                 }
+               } else if (window.ActiveXObject) {
+                 xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+               } else {
+                 alert('Your browser does not support xmlhttprequests.  Sorry.');
+               }
+  
+               xmlhttp.open('GET', GETurl, true);
+               xmlhttp.setRequestHeader('Content-Type', 'application/json');
+               xmlhttp.send(null);
+  
+               xmlhttp.onreadystatechange = function() {
+                   if (xmlhttp.readyState == 4) {
+                          if(xmlhttp.status == 200) {
+                           var myObj = eval ( '(' + xmlhttp.responseText + ')' );
+                           if(isDEBUG){
+                               alert("GET Success");
+                               alert("name=" + myObj.PlayerInfo.name + ", id=" + myObj.PlayerInfo.id + ", version=" +
+                                   myObj.PlayerInfo.version + ", FBID=" + myObj.PlayerInfo.facebookID +
+                                   ", imageURL=" + myObj.PlayerInfo.imageURL + ", Points=" + myObj.points);
+                           }
+                           document.getElementById('myPoints').innerHTML  = myObj.points;
+                       }
+                       else {
+                           if(isDEBUG){alert("GET Fail - status: " + xmlhttp.status + " - " + xmlhttp.responseText);}
+                         }
+                   } else {
+                       // wait for the call to complete
+                   }
+                  };
+                  return myObj;
+          }
+
+
+          function doPOSTPlayer(POSTPlayerURL, JSONInput) {
+               if(isDEBUG){
+                   alert("POST Player URL = " + POSTPlayerURL);
+               }
+               var myObj = null;
+               var xmlhttp = null;
+               if (window.XMLHttpRequest) {
+                 xmlhttp = new XMLHttpRequest();
+                 if ( typeof xmlhttp.overrideMimeType != 'undefined') {
+                   xmlhttp.overrideMimeType('application/json');
+                 }
+               } else if (window.ActiveXObject) {
+                 xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+               } else {
+                 alert('Your browser does not support xmlhttprequests.  Sorry.');
+               }
+  
+               xmlhttp.open('POST', POSTPlayerURL, false);
+               xmlhttp.setRequestHeader('Content-Type', 'application/json');
+               xmlhttp.send(JSONInput);
+  
+               xmlhttp.onreadystatechange = function() {
+                     if (xmlhttp.readyState == 4) {
+                         if(xmlhttp.status == 200) {
+                             myObj = eval ( '(' + xmlhttp.responseText + ')' );
+                             if(isDEBUG){
+                                 alert("POST Success");
+                                 alert("name=" + myObj.PlayerInfo.name + ", id=" + myObj.PlayerInfo.id + ", version=" +
+                                         myObj.PlayerInfo.version + ", FBID=" + myObj.PlayerInfo.facebookID +
+                                         ", imageURL=" + myObj.PlayerInfo.imageURL + ", Points=" + myObj.Points);
+                               }
+                             return myObj;
+                         }
+                         else {
+                             if(isDEBUG){alert("POST Fail - status: " + xmlhttp.status + " - " + xmlhttp.responseText);}
+                           }
+                     } else {
+                       // wait for the call to complete
+                     }
+                  };
+                  return null;
+          }
+
+
+          //Converts JavaScript arrays to JSON objects to pass to the WebService
+          function arrayToJson(a, key) {
+                var i, s = '';
+                for (i = 0; i < a.length; ++i) {
+                  s += '"' + a[i] + '"';
+                  if (i < a.length - 1) {
+                    s += ',';
+                  }
+                }
+                s += '';
+                if (key) {
+                  return '{"' + key + '":' + s + '}';
+                }
+                return s;
+              }
+
+          //Converts 2D arrays[][] to JSON
+          function array2dToJson(a, p, nl) {
+                var i, j, s;
+                if(p){
+                       s = '{"' + p + '":[';
+                    }
+                 else{
+                           s = '[';
+                 }
+                nl = nl || '';
+                for (i = 0; i < a.length; ++i) {
+                  s += '"' + nl + '",' + arrayToJson(a[i]);
+                  if (i < a.length - 1) {
+                    s += ',';
+                  }
+                }
+                s += ']';
+                return s;
+              }
+                         
+                          
+      </script>
+      
+      <center>
+      <H1>Welcome to Tutorial Demo</H1><P /><BR />
+      <a href='myInfo.html'>Get Your Info Here</a><BR />
+      <a href='friendsInfo.html'>Get Your Friends Info Here</a><P />
+      <div id='current_points'>Current point total is: </div><div id='myPoints'></div>
+      </center>
+      
 </body>
 </html>
