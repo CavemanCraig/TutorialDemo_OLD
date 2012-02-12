@@ -68,12 +68,12 @@
                    }
                    var POSTPlayerURL = "webService/PlayerRequest/" + myID + "/" + myName;
 
-                   var JSONfriendIDList = arrayToJson(friendIDList, "friendIDsList");
-                   var JSONfriendNameList = arrayToJson(friendNameList, "friendNamesList");
-                   var array2D = [
-                                  JSONfriendIDList,
-                                  JSONfriendNameList
-                                 ];
+                   //var JSONfriendIDList = arrayToJson(friendIDList, "friendIDsList");
+                   //var JSONfriendNameList = arrayToJson(friendNameList, "friendNamesList");
+               	   var array2D = [
+                              friendIDList,
+                              friendNameList
+                              ];
                    var JSONInput = array2dToJson(array2D, '', "newArray");
                    doPOSTPlayer(POSTPlayerURL, JSONInput);
                    doGETPlayer(myID);
@@ -178,7 +178,9 @@
 			   var hasEnoughFriends = true;
                var localFBID = 36985;
                var POSTPlayerURL = "webService/PlayerRequest/" + localFBID + "/Craig Schwarzwald";
-				
+				                   
+			   doPOSTUser(localFBID, "Craig Schwarzwald");
+               doGETUser(localFBID);
 			   if(hasEnoughFriends){
                		friendIDList = [5,6,7,8,9,10];
                		friendNameList = ["bob", "joe", "mary", "john", "jane", "lisa"];
