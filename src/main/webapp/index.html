@@ -41,8 +41,10 @@
           var myID=null;
           var myName=null;
           
-          var isLocal = false;
-          var isDEBUG = false;
+    /******  Change me to “true” if running on localhost,
+            Change me to “false if running on Facebook. ******/
+           var isLocal = window.location.href.indexOf("localhost") != -1;
+           var isDEBUG = false; //Print out debug statements to concole
                        
           function getMyInfo(){
               FB.api("/me", {fields: "id,name"}, function(response) {
@@ -171,11 +173,19 @@
 
           if(isLocal)
           {
-
+			   /**** Update to "false" to test alert for not enough friends or
+					 Update to "true" to test the link to the game and play ****/
+			   var hasEnoughFriends = true;
                var localFBID = 36985;
                var POSTPlayerURL = "webService/PlayerRequest/" + localFBID + "/Craig Schwarzwald";
-               friendIDList = [5,6,7];
-               friendNameList = ["bob", "joe", "mary"];
+				
+			   if(hasEnoughFriends){
+               		friendIDList = [5,6,7,8,9,10];
+               		friendNameList = ["bob", "joe", "mary", "john", "jane", "lisa"];
+			   } else{
+               		friendIDList = [5,6,7];
+               		friendNameList = ["bob", "joe", "mary"];
+			   }
                var array2D = [
                               friendIDList,
                               friendNameList
@@ -214,11 +224,14 @@
                            var myObj = eval ( '(' + xmlhttp.responseText + ')' );
                            if(isDEBUG){
                                alert("GET Success");
-                               alert("name=" + myObj.PlayerInfo.name + ", id=" + myObj.PlayerInfo.id + ", version=" +
-                                   myObj.PlayerInfo.version + ", FBID=" + myObj.PlayerInfo.facebookID +
-                                   ", imageURL=" + myObj.PlayerInfo.imageURL + ", Points=" + myObj.points);
+                               alert("name=" + myObj.playerInfo.name + ", id=" + myObj.playerInfo.id + ", version=" +
+                                   myObj.playerInfo.version + ", FBID=" + myObj.playerInfo.facebookID +
+                                   ", imageURL=" + myObj.playerInfo.imageURL + ", Points=" + myObj.points);
                            }
-                           document.getElementById('myPoints').innerHTML  = myObj.points;
+                           document.getElementById('myPoints').innerHTML = myObj.points;
+						   document.getElementById('PlayerID').innerHTML = myObj.playerInfo.facebookID;
+						   document.links['linkToGame'].href = myObj.gameLink.href;
+						   document.getElementById("linkToGame").onclick = eval(myObj.gameLink.onClickMethod); 
                        }
                        else {
                            if(isDEBUG){alert("GET Fail - status: " + xmlhttp.status + " - " + xmlhttp.responseText);}
@@ -258,9 +271,9 @@
                              myObj = eval ( '(' + xmlhttp.responseText + ')' );
                              if(isDEBUG){
                                  alert("POST Success");
-                                 alert("name=" + myObj.PlayerInfo.name + ", id=" + myObj.PlayerInfo.id + ", version=" +
-                                         myObj.PlayerInfo.version + ", FBID=" + myObj.PlayerInfo.facebookID +
-                                         ", imageURL=" + myObj.PlayerInfo.imageURL + ", Points=" + myObj.Points);
+                                 alert("name=" + myObj.playerInfo.name + ", id=" + myObj.playerInfo.id + ", version=" +
+                                         myObj.playerInfo.version + ", FBID=" + myObj.playerInfo.facebookID +
+                                         ", imageURL=" + myObj.playerInfo.imageURL + ", Points=" + myObj.Points);
                                }
                              return myObj;
                          }
@@ -311,14 +324,15 @@
                 return s;
               }
                          
-                          
       </script>
       
       <center>
       <H1>Welcome to Tutorial Demo</H1><P /><BR />
       <a href='myInfo.html'>Get Your Info Here</a><BR />
       <a href='friendsInfo.html'>Get Your Friends Info Here</a><P />
+	  <a href="#top" id='linkToGame'>Click Here to play the game</a>
       <div id='current_points'>Current point total is: </div><div id='myPoints'></div>
+	  <div id='PlayerID' style='display:none'></div>
       </center>
       
 </body>

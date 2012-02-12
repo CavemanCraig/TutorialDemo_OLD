@@ -104,6 +104,19 @@ public class Player implements java.io.Serializable {
 		this.friendList = friendList;
 	}
 	
+
+    @OneToOne
+    @JoinColumn(name="linkId")
+    private Link gameLink;
+
+	public Link getGameLink() {
+		return this.gameLink;
+	}
+
+	public void setGameLink(final Link gameLink) {
+		this.gameLink = gameLink;
+	}
+	
     public Player(){
     }
 
@@ -111,8 +124,10 @@ public class Player implements java.io.Serializable {
         this.playerInfo = playerInfo;
         this.points = 100; //New users get 100 points to start with
         this.friendList = new ArrayList<Long>();
+        this.gameLink = null;
     }
 
 	public String toString() {
 		return playerInfo.getName() + ", " + points + ", FrindIDs: [" + friendList + "]";
-	} }
+	} 
+}
