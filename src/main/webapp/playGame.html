@@ -156,7 +156,7 @@
 			var friendNameList = convertStringToList(friendNameListString, ",");
 			for (var x=0; x<5; x++){
 				var possibleNameSlot = "possibleName" + (x+1);
-				document.getElementById(possibleNameSlot).innerHTML  = friendNameList[x];
+				document.getElementById(possibleNameSlot).innerHTML  = friendNameList[x].replace("%20", " ");
 			}
 
        </script>
