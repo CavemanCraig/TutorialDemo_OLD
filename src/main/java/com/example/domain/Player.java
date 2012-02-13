@@ -93,7 +93,7 @@ public class Player implements java.io.Serializable {
 		this.points = points;
 	}
 
-	@Column
+	@Column(length=100000)
 	private ArrayList<Long> friendList;
 
 	public ArrayList<Long> getFriendList() {
