@@ -99,7 +99,7 @@
     			var regexS = "[\\?&]"+varname+"=([^&#]*)";
     			var regex = new RegExp( regexS );
     			var results = regex.exec( window.location.href );
-    			if( results == null ) return ""; else return results[1];
+    			if( results == null ) return ""; else return results[1].replace("%20", " ");
 			}
 
             function convertStringToList(stringList, delim)
@@ -135,7 +135,7 @@
             var PlayerID = getURLParam("playerID");
 			var PlayerName = getURLParam("playerName");			
 			var PlayerPoints = getURLParam("playerPoints");
-            document.getElementById("Name").innerHTML  = "Player Name: " + PlayerName.replace("%20", " ");
+            document.getElementById("Name").innerHTML = PlayerName;
             document.getElementById("Points").innerHTML  = "Point total: " + PlayerPoints;
            
 			//Get the list of the 3 Friend IDs we will need to guess
