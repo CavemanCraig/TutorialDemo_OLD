@@ -99,7 +99,7 @@
     			var regexS = "[\\?&]"+varname+"=([^&#]*)";
     			var regex = new RegExp( regexS );
     			var results = regex.exec( window.location.href );
-    			if( results == null ) return ""; else return results[1].replace("%20", " ");
+    			if( results == null ) return ""; else return results[1].split("%20").join(" ");
 			}
 
             function convertStringToList(stringList, delim)
@@ -156,7 +156,7 @@
 			var friendNameList = convertStringToList(friendNameListString, ",");
 			for (var x=0; x<5; x++){
 				var possibleNameSlot = "possibleName" + (x+1);
-				document.getElementById(possibleNameSlot).innerHTML  = friendNameList[x].replace("%20", " ");
+				document.getElementById(possibleNameSlot).innerHTML  = friendNameList[x];
 			}
 
        </script>
