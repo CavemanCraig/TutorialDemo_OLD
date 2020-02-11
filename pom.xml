@@ -24,11 +24,11 @@
 	<repositories>
 		<repository>
 			<id>JBOSS_NEXUS</id>
-			<url>http://repository.jboss.org/nexus/content/groups/public</url>
+			<url>https://repository.jboss.org/nexus/content/groups/public</url>
 		</repository>
 		<repository>
 			<id>jboss</id>
-			<url>http://repository.jboss.com/maven2/</url>
+			<url>https://repository.jboss.com/maven2/</url>
 			<releases>
 				<enabled>true</enabled>
 			</releases>
